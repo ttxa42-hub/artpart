@@ -34,17 +34,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .hidden { display: none; }
 .price-tag { color: #27ae60; font-weight: 800; font-size: 16px; margin-top: 6px; }
 .cat-count { display: inline-block; background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 8px; }
-.loader { text-align: center; padding: 40px; font-size: 18px; }
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
 @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 </style>
 </head>
 <body>
-<div class="container" id="app-container" style="display:none;">
+<div class="container" id="app-container">
     <div id="screen-home">
         <div class="header">
-            <div class="logo">🚗💨</div>
+            <div class="logo">💨</div>
             <div class="title">ArTPart</div>
             <div class="subtitle">Премиум подбор автозапчастей</div>
             <div class="stats" id="stats-badge">Загрузка...</div>
@@ -58,12 +57,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
                 <div class="card-subtitle">Заберите деталь через 30 минут!</div>
             </div>
             <div class="card" onclick="showCars('left_dom')">
-                <div class="card-icon">🇷🇺</div>
+                <div class="card-icon">🇷</div>
                 <div class="card-title">Отечественные авто <span class="cat-count" id="count-left_dom">0</span></div>
                 <div class="card-subtitle">Lada, UAZ, GAZ, Москвич</div>
             </div>
             <div class="card" onclick="showCars('left_for')">
-                <div class="card-icon">🌍</div>
+                <div class="card-icon"></div>
                 <div class="card-title">Иномарки (Левый руль) <span class="cat-count" id="count-left_for">0</span></div>
                 <div class="card-subtitle">BMW, Mercedes, Audi, Toyota</div>
             </div>
@@ -110,40 +109,183 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
         </div>
     </div>
 </div>
-<div id="loader" class="loader">⏳ Загружаем базу данных с сервера...</div>
 
 <script>
 try { Telegram.WebApp.ready(); Telegram.WebApp.expand(); } catch(e) {}
 
-const API_URL = "https://vote-glenn-flour-installed.trycloudflare.com/api/cars";
+const db = {
+  "left_dom": [
+    {"id":"lada_granta","name":"Lada Granta / Granta FL","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lada_vesta","name":"Lada Vesta / SW Cross","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lada_niva_urban","name":"Lada Niva Urban","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lada_niva_legend","name":"Lada Niva Legend (3-дв.)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lada_largus","name":"Lada Largus / Cross","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lada_xray","name":"Lada XRAY","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"uaz_patriot","name":"UAZ Patriot","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"uaz_hunter","name":"UAZ Hunter","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"uaz_pickup","name":"UAZ Pickup","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"gazelle_next","name":"Gazelle Next / Business","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"moskvich_3","name":"Москвич 3","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"evolute_i_pro","name":"Evolute i-Pro","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]}
+  ],
+  "left_for": [
+    {"id":"hyundai_solaris","name":"Hyundai Solaris (2011-2022)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"hyundai_creta","name":"Hyundai Creta (2016-н.в.)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"hyundai_tucson","name":"Hyundai Tucson (2015-н.в.)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"hyundai_santa_fe","name":"Hyundai Santa Fe","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"hyundai_sonata","name":"Hyundai Sonata","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_rio","name":"Kia Rio / X-Line","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_sportage","name":"Kia Sportage","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_sorento","name":"Kia Sorento / Prime","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_k5","name":"Kia K5 / Optima","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_stinger","name":"Kia Stinger","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kia_carnival","name":"Kia Carnival","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vw_polo","name":"Volkswagen Polo Sedan","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vw_tiguan","name":"Volkswagen Tiguan","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vw_touareg","name":"Volkswagen Touareg","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vw_passat","name":"Volkswagen Passat","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"skoda_rapid","name":"Skoda Rapid / Liftback","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"skoda_octavia","name":"Skoda Octavia A7/A8","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"skoda_kodiaq","name":"Skoda Kodiaq","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"skoda_karoq","name":"Skoda Karoq","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"ford_focus","name":"Ford Focus 2/3","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"ford_kuga","name":"Ford Kuga","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"ford_mondeo","name":"Ford Mondeo","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"renault_duster","name":"Renault Duster","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"renault_kaptur","name":"Renault Kaptur","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"renault_logan","name":"Renault Logan / Sandero","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"renault_arkana","name":"Renault Arkana","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"nissan_qashqai","name":"Nissan Qashqai","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"nissan_xtrail","name":"Nissan X-Trail","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"nissan_murano","name":"Nissan Murano","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"nissan_teana","name":"Nissan Teana","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"nissan_pathfinder","name":"Nissan Pathfinder","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mazda_cx5","name":"Mazda CX-5","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mazda_6","name":"Mazda 6","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mazda_cx9","name":"Mazda CX-9","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mazda_3","name":"Mazda 3","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_camry","name":"Toyota Camry (v40/v50/v70)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_corolla","name":"Toyota Corolla (E180/E210)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_rav4","name":"Toyota RAV4 (XA40/XA50)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_highlander","name":"Toyota Highlander","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_lc200","name":"Toyota Land Cruiser 200/300","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"toyota_lc_prado","name":"Toyota Land Cruiser Prado 150","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"bmw_x5","name":"BMW X5 (F15/G05)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"bmw_x3","name":"BMW X3 (G01)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"bmw_5","name":"BMW 5 Series (G30)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mercedes_e","name":"Mercedes-Benz E-Class (W213)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mercedes_gle","name":"Mercedes-Benz GLE","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mercedes_glc","name":"Mercedes-Benz GLC","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"audi_a6","name":"Audi A6 (C7/C8)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"audi_q5","name":"Audi Q5","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"audi_q7","name":"Audi Q7","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"volvo_xc60","name":"Volvo XC60","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"volvo_xc90","name":"Volvo XC90","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lexus_rx","name":"Lexus RX","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lexus_lx","name":"Lexus LX","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"honda_cr_v","name":"Honda CR-V","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mitsubishi_outlander","name":"Mitsubishi Outlander","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mitsubishi_pajero","name":"Mitsubishi Pajero 4","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"subaru_forester","name":"Subaru Forester","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"subaru_outback","name":"Subaru Outback","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"jeep_grand_cherokee","name":"Jeep Grand Cherokee","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"land_rover_discovery","name":"Land Rover Discovery 5","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"range_rover_sport","name":"Range Rover Sport","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"porsche_cayenne","name":"Porsche Cayenne","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]}
+  ],
+  "right_jdm": [
+    {"id":"prius_20","name":"Toyota Prius 20 (2003-2009)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"prius_30","name":"Toyota Prius 30 (2009-2015)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"prius_50","name":"Toyota Prius 50 (2015-н.в.)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"prius_alpha","name":"Toyota Prius α / Prius+","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"corolla_fielder","name":"Toyota Corolla Fielder","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"corolla_axio","name":"Toyota Corolla Axio","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"corolla_cross_jdm","name":"Toyota Corolla Cross (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"mark_x","name":"Toyota Mark X","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"crown","name":"Toyota Crown","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"camry_jdm","name":"Toyota Camry (XV70 JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"alphard","name":"Toyota Alphard","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vellfire","name":"Toyota Vellfire","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"estima","name":"Toyota Estima / Previa","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"harrier","name":"Toyota Harrier","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"kluger","name":"Toyota Kluger / Highlander JDM","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"rav4_jdm","name":"Toyota RAV4 (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lc_prado_jdm","name":"Toyota Land Cruiser Prado (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lc200_jdm","name":"Toyota Land Cruiser 200 (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lexus_rx_jdm","name":"Lexus RX (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"serena","name":"Nissan Serena","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"note","name":"Nissan Note","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"dayz","name":"Nissan Dayz","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"xtrail_jdm","name":"Nissan X-Trail (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"outlander_jdm","name":"Mitsubishi Outlander (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"delica","name":"Mitsubishi Delica","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"stepwgn","name":"Honda Stepwgn","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"odyssey","name":"Honda Odyssey","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"fit","name":"Honda Fit / Jazz","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"vezel","name":"Honda Vezel","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"cr_v_jdm","name":"Honda CR-V (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"impreza","name":"Subaru Impreza","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"legacy","name":"Subaru Legacy","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"forester_jdm","name":"Subaru Forester (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"levorg","name":"Subaru Levorg","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"cx5_jdm","name":"Mazda CX-5 (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"axela","name":"Mazda Axela / 3 (JDM)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"demio","name":"Mazda Demio / 2","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"voxy","name":"Toyota Voxy","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"noah","name":"Toyota Noah","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"wish","name":"Toyota Wish","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]}
+  ],
+  "chinese": [
+    {"id":"chery_tiggo_4","name":"Chery Tiggo 4 Pro","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"chery_tiggo_7","name":"Chery Tiggo 7 Pro Max","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"chery_tiggo_8","name":"Chery Tiggo 8 Pro Max","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"chery_arrizo_8","name":"Chery Arrizo 8","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"exeed_txl","name":"Exeed TXL","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"exeed_vx","name":"Exeed VX","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"exeed_lx","name":"Exeed LX","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"haval_jolion","name":"Haval Jolion","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"haval_f7","name":"Haval F7","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"haval_h9","name":"Haval H9","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"haval_dargo","name":"Haval Dargo / Big Dog","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"haval_dht","name":"Haval DHT","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"geely_coolray","name":"Geely Coolray","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"geely_atlas","name":"Geely Atlas Pro","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"geely_monjaro","name":"Geely Monjaro (KX11)","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"geely_tugella","name":"Geely Tugella","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"tank_300","name":"Tank 300","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"tank_500","name":"Tank 500","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"omoda_c5","name":"Omoda C5","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"jaecoo_j7","name":"Jaecoo J7","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"jetour_dashing","name":"Jetour Dashing","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"jetour_x70","name":"Jetour X70","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"changan_uni_v","name":"Changan UNI-V","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"changan_uni_k","name":"Changan UNI-K","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"changan_cs75","name":"Changan CS75 Plus","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"baic_x55","name":"BAIC X55","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"baic_x75","name":"BAIC X75","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"gac_gs8","name":"GAC GS8","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"dongfeng_580","name":"Dongfeng 580","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"lixiang_l7","name":"Li Auto L7 / L9","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"zeekr_001","name":"Zeekr 001","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]},
+    {"id":"byd_tang","name":"BYD Tang","parts":[{"name":"Масло моторное + фильтр","oem":"—","system":"Двигатель и ТО"}]}
+  ]
+};
 
-let db = {};
 let currentCategory = '';
 let currentCars = [];
 
-async function loadDatabase() {
-    try {
-        const response = await fetch(API_URL);
-        if (!response.ok) throw new Error('Network response was not ok');
-        db = await response.json();
-        
-        let totalCars = 0;
-        let totalParts = 0;
-        for (let cat in db) {
-            const count = Object.keys(db[cat]).length;
-            totalCars += count;
-            document.getElementById('count-' + cat).innerText = count;
-            for (let carId in db[cat]) {
-                totalParts += Object.keys(db[cat][carId].parts || {}).length;
-            }
+function initApp() {
+    let totalCars = 0;
+    let totalParts = 0;
+    for (let cat in db) {
+        const count = db[cat].length;
+        totalCars += count;
+        document.getElementById('count-' + cat).innerText = count;
+        for (let car of db[cat]) {
+            totalParts += car.parts.length;
         }
-        document.getElementById('stats-badge').innerText = `🚘 ${totalCars} авто · 🔧 ${totalParts} запчастей`;
-        
-        document.getElementById('loader').style.display = 'none';
-        document.getElementById('app-container').style.display = 'block';
-    } catch (error) {
-        document.getElementById('loader').innerHTML = `❌ Ошибка загрузки базы.<br><small>${error.message}</small><br><br><button class="btn" onclick="location.reload()">🔄 Повторить</button>`;
     }
+    document.getElementById('stats-badge').innerText = `🚘 ${totalCars} авто · 🔧 ${totalParts} запчастей`;
 }
 
 function showScreen(id) {
@@ -159,7 +301,7 @@ function showCars(category) {
     const catNames = {
         left_dom: '🇷🇺 Отечественные',
         left_for: '🌍 Иномарки',
-        right_jdm: '🇯🇵 Правый руль (JDM)',
+        right_jdm: '🇯 Правый руль (JDM)',
         chinese: '🇨🇳 Китайские авто'
     };
     document.getElementById('cars-header').innerText = catNames[category];
@@ -169,13 +311,12 @@ function showCars(category) {
 function renderCars(carsToRender) {
     const list = document.getElementById('cars-list');
     list.innerHTML = '';
-    for (let carId in carsToRender) {
-        const car = carsToRender[carId];
-        const partsCount = Object.keys(car.parts || {}).length;
+    for (let car of carsToRender) {
+        const partsCount = car.parts.length;
         const div = document.createElement('div');
         div.className = 'card';
         div.innerHTML = `<div class="card-icon">🚗</div><div class="card-title">${car.name}</div><div class="card-subtitle">${partsCount} запчастей</div>`;
-        div.onclick = () => showParts(carId, car);
+        div.onclick = () => showParts(car);
         list.appendChild(div);
     }
 }
@@ -186,12 +327,7 @@ document.getElementById('carSearchInput').addEventListener('input', function(e) 
         renderCars(currentCars);
         return;
     }
-    const filtered = {};
-    for (let carId in currentCars) {
-        if (currentCars[carId].name.toLowerCase().includes(query)) {
-            filtered[carId] = currentCars[carId];
-        }
-    }
+    const filtered = currentCars.filter(car => car.name.toLowerCase().includes(query));
     renderCars(filtered);
 });
 
@@ -212,14 +348,13 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
     
     let found = false;
     for (let cat in db) {
-        for (let carId in db[cat]) {
-            const car = db[cat][carId];
+        for (let car of db[cat]) {
             if (car.name.toLowerCase().includes(query)) {
                 found = true;
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.innerHTML = `<div class="card-icon">🚗</div><div class="card-title">${car.name}</div>`;
-                div.onclick = () => { showParts(carId, car); showScreen('screen-parts'); };
+                div.onclick = () => { showParts(car); showScreen('screen-parts'); };
                 resultsDiv.appendChild(div);
             }
         }
@@ -227,14 +362,12 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
     if (!found) resultsDiv.innerHTML = '<div class="card" style="text-align:center">😕 Ничего не найдено</div>';
 });
 
-function showParts(carId, car) {
+function showParts(car) {
     const list = document.getElementById('parts-list');
     list.innerHTML = '';
     document.getElementById('parts-header').innerText = car.name;
     
-    const parts = car.parts || {};
-    for (let partId in parts) {
-        const part = parts[partId];
+    for (let part of car.parts) {
         const div = document.createElement('div');
         div.className = 'card';
         div.innerHTML = `
@@ -247,7 +380,7 @@ function showParts(carId, car) {
     }
 }
 
-loadDatabase();
+initApp();
 </script>
 </body>
 </html>
