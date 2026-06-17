@@ -1,0 +1,16 @@
+{
+  "name": "ArTPart42",
+  "short_name": "ArTPart42",
+  "description": "Профессиональный подбор автозапчастей",
+  "start_url": "/artpart/",
+  "display": "standalone",
+  "background_color": "#1e3c2f",
+  "theme_color": "#1e3c2f",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
