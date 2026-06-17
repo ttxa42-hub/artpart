@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta name="verify-admitad" content="088c0b982f" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ArTPart42</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif; background: linear-gradient(135deg, #1e3c2f 0%, #142920 100%); min-height:100vh; padding: 0 20px 90px 20px; color:#fff}
+.container{max-width:600px;margin:0 auto}
+.header-banner { position: relative; width: calc(100% + 40px); margin-left: -20px; margin-right: -20px; overflow: hidden; border-radius: 0 0 24px 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+.header-banner img { width: 100%; height: auto; display: block; }
+.header-banner::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent 0%, rgba(20, 41, 32, 0.9) 100%); z-index: 1; pointer-events: none; }
+.header { text-align: center; margin-bottom: 15px; }
+.stats { display:inline-block; background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:20px; font-size:12px; margin-top:15px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px); }
+.search-box{ width:100%; padding:14px 20px; border-radius:50px; border:none; background: rgba(235, 235, 235, 0.95); color:#333; font-family: 'Montserrat', sans-serif; font-size:15px; font-weight: 500; margin-bottom:15px; outline:none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.card { border-radius: 16px; padding: 16px; margin-bottom: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.1s ease; }
+.card:active { transform: scale(0.98); }
+.card-icon{font-size:30px;margin-bottom:6px; display: block;}
+.card-title{font-weight:700;font-size:16px;margin-bottom:4px}
+.card-subtitle{font-size:13px; opacity: 0.85}
+.card.garage { background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%); color: #fff; border: 2px solid rgba(255,255,255,0.3); }
+.card.garage .card-title, .card.garage .card-subtitle { color: #fff; font-weight: 700; }
+.card.milky { background: #f9f7f2; color: #2c3e50; }
+.card.milky .card-title { color: #1a3c2f; }
+.card.milky .card-subtitle { color: #5a6c5d; }
+.card.local { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff; }
+.card.local .card-title, .card.local .card-subtitle { color: #fff; }
+#searchResults .card { background: #f9f7f2; color: #2c3e50; }
+#searchResults .card .card-title { color: #1a3c2f; }
+.btn{ display:block; width:100%; padding:14px; background: linear-gradient(135deg, #1e3c2f 0%, #2d5a45 100%); color:#fff; border:none; border-radius:50px; font-family: 'Montserrat', sans-serif; font-size:15px; font-weight:700; text-align:center; margin-top:15px; cursor:pointer; text-decoration:none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.btn-buy{background:linear-gradient(135deg,#f12711 0%,#f5af19 100%); color: #fff;}
+.btn-support{background:linear-gradient(135deg,#00c6ff 0%,#0072ff 100%);}
+.btn-vin{background:linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%); color: #fff; margin-bottom: 10px;}
+.btn-danger{background:linear-gradient(135deg,#ff5252 0%,#d32f2f 100%); color: #fff; margin-top: 10px;}
+.btn-outline{background: transparent; border: 2px solid rgba(255,255,255,0.5); color: #fff; margin-top: 10px;}
+.btn-video{background:linear-gradient(135deg,#ff0000 0%,#cc0000 100%); color: #fff; margin-top: 10px;}
+.btn-service{background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%); color: #fff; margin-top: 10px;}
+.back-btn { background: #4fc3f7; color: #fff; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 560px; z-index: 1000; box-shadow: 0 6px 20px rgba(79, 195, 247, 0.4); font-family: 'Montserrat', sans-serif; font-weight: 700; border-radius: 50px; padding: 14px; text-align: center; border: none; font-size: 15px; cursor: pointer; }
+.back-btn:active { transform: translateX(-50%) scale(0.98); }
+.hidden{display:none}
+.recommendation-item, .tool-item { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 14px; }
+.service-card { background: rgba(255,255,255,0.1); padding: 15px; border-radius: 12px; margin-top: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="screen-home">
+<div class="header">
+    <div class="header-banner"><img src="https://ttxa42-hub.github.io/artpart/logo.jpg" alt="ArTPart42 Баннер"></div>
+    <div class="stats" id="stats-badge">⏳ Загрузка базы...</div>
+</div>
+<input type="text" id="searchInput" class="search-box" placeholder="🔍 Поиск автомобиля (например: Camry)...">
+<div id="searchResults" class="hidden"></div>
+<div id="categoriesList">
+<div class="card garage" onclick="openGarage()">
+    <div class="card-icon">🚗</div>
+    <div class="card-title" id="garage-main-title">Мой гараж</div>
+    <div class="card-subtitle" id="garage-main-subtitle">Нажмите, чтобы добавить ваш автомобиль</div>
+</div>
+<div class="card milky" onclick="showCars('left_for', false)"><div class="card-icon">🌍</div><div class="card-title">Иномарки (Левый руль) <span id="count-left_for">0</span></div><div class="card-subtitle">BMW, Mercedes, Audi, Toyota, Kia...</div></div>
+<div class="card milky" onclick="showCars('right_jdm', false)"><div class="card-icon">🇯🇵</div><div class="card-title">Правый руль (JDM) <span id="count-right_jdm">0</span></div><div class="card-subtitle">Prius, Mark X, Skyline, Supra...</div></div>
+<div class="card milky" onclick="showCars('chinese', false)"><div class="card-icon">🇨🇳</div><div class="card-title">Китайские авто <span id="count-chinese">0</span></div><div class="card-subtitle">Chery, Haval, Geely, Tank, Livan...</div></div>
+<div class="card local" onclick="showScreen('screen-local')"><div class="card-icon">🏪</div><div class="card-title">В наличии в моём городе</div><div class="card-subtitle">Хиты продаж + быстрый подбор за 15 мин!</div></div>
+</div>
+<a href="https://t.me/ArTPart42admin" target="_blank" class="btn btn-support">💬 Написать создателю</a>
+</div>
+
+<div id="screen-cars" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-home')">← На главную</button>
+<div class="header"><div class="title" id="cars-header" style="color: #fff; margin-top: 10px; font-size: 22px;">Автомобили</div></div>
+<div id="cars-list"></div>
+</div>
+
+<div id="screen-parts" class="hidden">
+<button class="back-btn" id="parts-back-btn" onclick="showScreen('screen-cars')">← Назад к авто</button>
+<div class="header"><div class="title" id="parts-header" style="color: #fff; margin-top: 10px; font-size: 22px;">Запчасти</div></div>
+<div id="parts-list"></div>
+</div>
+
+<!-- 🔥 НОВЫЙ ЭКРАН: ДЕТАЛЬНАЯ ИНФОРМАЦИЯ О ЗАПЧАСТИ -->
+<div id="screen-part-detail" class="hidden">
+<button class="back-btn" id="detail-back-btn" onclick="showScreen('screen-parts')">← Назад к запчастям</button>
+<div class="header"><div class="title" id="detail-header" style="color: #fff; margin-top: 10px; font-size: 20px;">Запчасть</div></div>
+<div id="detail-content" style="margin-top: 20px;"></div>
+</div>
+
+<!-- 🔥 ЭКРАН ВЫБОРА МАГАЗИНА -->
+<div id="screen-shops" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-part-detail')">← Назад</button>
+<div class="header"><div class="title" style="color: #fff; margin-top: 10px; font-size: 22px;">🏪 Выберите магазин</div></div>
+<div id="shops-list" style="margin-top: 20px;"></div>
+</div>
+
+<div id="screen-garage-select" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-home')">← На главную</button>
+<div class="header"><div class="title" style="color: #fff; margin-top: 10px; font-size: 22px;">🚗 Выберите категорию</div></div>
+<div id="garage-category-list" style="margin-top: 20px;">
+    <div class="card milky" onclick="showGarageCarList('left_for')"><div class="card-icon">🌍</div><div class="card-title">Иномарки (Левый руль)</div><div class="card-subtitle">BMW, Mercedes, Audi, Toyota...</div></div>
+    <div class="card milky" onclick="showGarageCarList('right_jdm')"><div class="card-icon">🇯🇵</div><div class="card-title">Правый руль (JDM)</div><div class="card-subtitle">Prius, Mark X, Skyline, Supra...</div></div>
+    <div class="card milky" onclick="showGarageCarList('chinese')"><div class="card-icon">🇨🇳</div><div class="card-title">Китайские авто</div><div class="card-subtitle">Chery, Haval, Geely, Tank...</div></div>
+</div>
+<a href="https://t.me/ArTPart42admin?text=Здравствуйте!%20Моего%20автомобиля%20нет%20в%20списке,%20хочу%20его%20добавить:%20" target="_blank" class="btn btn-outline" style="margin-top: 30px;">🚗 Нет моего авто? Сообщить нам</a>
+</div>
+
+<div id="screen-garage-list" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-garage-select')">← К категориям</button>
+<div class="header"><div class="title" id="garage-list-header" style="color: #fff; margin-top: 10px; font-size: 22px;">Автомобили</div></div>
+<div id="garage-cars-list"></div>
+</div>
+
+<div id="screen-garage" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-home')">← На главную</button>
+<div class="header"><div class="title" style="color: #fff; margin-top: 10px; font-size: 22px;">🚗 Мой гараж</div></div>
+<div id="garage-content" style="margin-top: 20px;"></div>
+</div>
+
+<div id="screen-local" class="hidden">
+<button class="back-btn" onclick="showScreen('screen-home')">← На главную</button>
+<div class="header"><div class="title" style="color: #fff; margin-top: 10px; font-size: 22px;">🏪 Партнёрский магазин</div></div>
+<div style="text-align: center; color: #a8d5c4; font-size: 14px; margin: 15px 0 20px 0; font-weight: 500;">🔥 Хиты продаж всегда в наличии<br>ул. Ленина, 45</div>
+<div class="card milky"><div class="card-title">Масло моторное 5W-40 (4л)</div><div class="card-subtitle" style="font-size: 20px; font-weight: 700; color: #1a3c2f; margin: 8px 0;">3 200 ₽</div><div class="card-subtitle" style="color: #11998e; font-weight: 600;">🟢 В наличии</div><a href="#" onclick="sendLocalRequest('Масло моторное 5W-40 (4л)'); return false;" class="btn" style="margin-top: 12px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">💬 Узнать наличие для моего авто</a></div>
+<div class="card milky"><div class="card-title">Фильтр масляный (оригинал)</div><div class="card-subtitle" style="font-size: 20px; font-weight: 700; color: #1a3c2f; margin: 8px 0;">850 ₽</div><div class="card-subtitle" style="color: #11998e; font-weight: 600;">🟢 В наличии</div><a href="#" onclick="sendLocalRequest('Фильтр масляный (оригинал)'); return false;" class="btn" style="margin-top: 12px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">💬 Узнать наличие для моего авто</a></div>
+<div class="card milky"><div class="card-title">Колодки тормозные передние</div><div class="card-subtitle" style="font-size: 20px; font-weight: 700; color: #1a3c2f; margin: 8px 0;">от 1 500 ₽</div><div class="card-subtitle" style="color: #11998e; font-weight: 600;">🟢 В наличии</div><a href="#" onclick="sendLocalRequest('Колодки тормозные передние'); return false;" class="btn" style="margin-top: 12px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">💬 Узнать наличие для моего авто</a></div>
+<a href="#" onclick="sendLocalRequest('индивидуальный подбор запчастей'); return false;" class="btn btn-support" style="margin-top: 25px; font-size: 16px; padding: 16px;">🔍 Индивидуальный подбор по VIN или названию</a>
+<div style="text-align: center; margin-top: 15px; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 20px;">Ответим в течение 15 минут в рабочее время</div>
+</div>
+</div>
+
+<script>
+let db = {};
+let myCar = JSON.parse(localStorage.getItem('artpart_garage'));
+let currentPart = null;
+
+window.onload = function() {
+    try { if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } } catch(e) {}
+    updateGarageMainCard();
+    loadDataWithRetry(3);
+};
+
+function loadDataWithRetry(maxRetries) {
+    let attempt = 0;
+    function tryLoad() {
+        attempt++;
+        document.getElementById('stats-badge').textContent = '⏳ Загрузка базы... (попытка ' + attempt + ')';
+        fetch('https://ttxa42-hub.github.io/artpart/data.json', { cache: 'no-cache' })
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка HTTP: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                db = data;
+                try { localStorage.setItem('artpart_cache', JSON.stringify(data)); } catch(e) {}
+                initApp();
+            })
+            .catch(error => {
+                let cached = localStorage.getItem('artpart_cache');
+                if (cached) {
+                    try { db = JSON.parse(cached); document.getElementById('stats-badge').textContent = '📱 Офлайн-режим'; initApp(); return; } catch(e) {}
+                }
+                if (attempt < maxRetries) { setTimeout(tryLoad, 1000); }
+                else { document.getElementById('stats-badge').innerHTML = '❌ Не удалось загрузить<br><button onclick="loadDataWithRetry(3)" style="margin-top:10px;padding:8px 16px;background:#4fc3f7;border:none;border-radius:20px;color:#fff;cursor:pointer;">🔄 Повторить</button>'; }
+            });
+    }
+    tryLoad();
+}
+
+function updateGarageMainCard() {
+    const title = document.getElementById('garage-main-title');
+    const subtitle = document.getElementById('garage-main-subtitle');
+    if (myCar) {
+        let vinBadge = myCar.vin ? ' ✅' : '';
+        title.textContent = '🚗 ' + myCar.name + vinBadge;
+        subtitle.textContent = myCar.vin ? 'VIN сохранен. Нажмите для подбора' : 'Нажмите, чтобы указать VIN или подобрать запчасти';
+    } else {
+        title.textContent = 'Мой гараж';
+        subtitle.textContent = 'Нажмите, чтобы добавить ваш автомобиль';
+    }
+}
+
+function openGarage() {
+    if (!myCar) { showScreen('screen-garage-select'); }
+    else { renderGarageScreen(); showScreen('screen-garage'); }
+}
+
+function showGarageCarList(cat) {
+    var list = document.getElementById('garage-cars-list');
+    var header = document.getElementById('garage-list-header');
+    list.innerHTML = '';
+    var names = {left_for:'🌍 Иномарки (Левый руль)', right_jdm:'🇯🇵 Правый руль (JDM)', chinese:'🇨🇳 Китайские авто'};
+    header.textContent = names[cat] || 'Автомобили';
+    var cars = db[cat] || [];
+    for(var i=0; i<cars.length; i++) {
+        (function(idx) {
+            var car = cars[idx]; if(!car) return;
+            var d = document.createElement('div'); d.className = 'card milky';
+            d.innerHTML = '<div class="card-icon">🚗</div><div class="card-title">' + car.name + '</div>';
+            d.onclick = function() {
+                myCar = { category: cat, index: idx, name: car.name, brand: car.brand, model: car.model, vin: '' };
+                localStorage.setItem('artpart_garage', JSON.stringify(myCar));
+                updateGarageMainCard(); renderGarageScreen(); showScreen('screen-garage');
+            };
+            list.appendChild(d);
+        })(i);
+    }
+    showScreen('screen-garage-list');
+}
+
+function renderGarageScreen() {
+    const content = document.getElementById('garage-content');
+    let vinText = myCar.vin ? myCar.vin : 'Не указан';
+    let vinBtnText = myCar.vin ? '📝 Изменить VIN-номер' : '📝 Указать VIN-номер';
+    content.innerHTML = '<div class="card milky" style="text-align: center; padding: 30px 20px;"><div class="card-icon" style="font-size: 60px;">🚘</div><div class="card-title" style="font-size: 22px; margin: 15px 0;">' + myCar.name + '</div><div class="card-subtitle" style="font-size: 15px; margin-bottom: 5px;">VIN: <b style="color:#1a3c2f">' + vinText + '</b></div><div class="card-subtitle" style="font-size: 12px; margin-bottom: 20px; opacity: 0.7;">Указание VIN гарантирует 100% точность подбора</div><button class="btn btn-vin" onclick="editVin()">' + vinBtnText + '</button><button class="btn btn-buy" onclick="showPartsByIndex(\'' + myCar.category + '\', ' + myCar.index + ', true)">🛠 Подобрать запчасти для этого авто</button><button class="btn btn-danger" onclick="clearGarage()">🗑 Сменить или удалить автомобиль</button></div>';
+}
+
+function editVin() {
+    let currentVin = myCar.vin || '';
+    let newVin = prompt('Введите VIN-номер вашего автомобиля (17 символов):', currentVin);
+    if (newVin !== null) { myCar.vin = newVin.trim().toUpperCase(); localStorage.setItem('artpart_garage', JSON.stringify(myCar)); updateGarageMainCard(); renderGarageScreen(); }
+}
+
+function clearGarage() {
+    if(confirm('Вы уверены, что хотите удалить этот автомобиль из гаража?')) {
+        localStorage.removeItem('artpart_garage'); myCar = null; updateGarageMainCard(); showScreen('screen-home');
+    }
+}
+
+function sendLocalRequest(partName) {
+    let carInfo = myCar ? myCar.name : 'Не указан';
+    let vinInfo = (myCar && myCar.vin) ? ', VIN: ' + myCar.vin : '';
+    let text = 'Здравствуйте! Интересует ' + partName + '. Мой автомобиль: ' + carInfo + vinInfo + '.';
+    window.open('https://t.me/ArTPart42admin?text=' + encodeURIComponent(text), '_blank');
+}
+
+function showScreen(id) {
+    ['screen-home','screen-cars','screen-parts','screen-part-detail','screen-shops','screen-local','screen-garage-select','screen-garage-list','screen-garage'].forEach(function(s) { var e = document.getElementById(s); if(e) e.classList.add('hidden'); });
+    var t = document.getElementById(id); if(t) { t.classList.remove('hidden'); window.scrollTo(0,0); }
+}
+
+function showCars(cat, fromSearch) {
+    var list = document.getElementById('cars-list');
+    var header = document.getElementById('cars-header');
+    list.innerHTML = '';
+    var names = {left_for:'🌍 Иномарки (Левый руль)', right_jdm:'🇯🇵 Правый руль (JDM)', chinese:'🇨🇳 Китайские авто'};
+    header.textContent = names[cat] || 'Автомобили';
+    var cars = db[cat] || [];
+    for(var i=0; i<cars.length; i++) {
+        (function(idx) {
+            var car = cars[idx]; if(!car) return;
+            var d = document.createElement('div'); d.className = 'card milky';
+            d.innerHTML = '<div class="card-icon">🚗</div><div class="card-title">' + car.name + '</div><div class="card-subtitle">' + (car.parts ? car.parts.length : 0) + ' запчастей</div>';
+            d.onclick = function() { showPartsByIndex(cat, idx, false); };
+            list.appendChild(d);
+        })(i);
+    }
+    showScreen('screen-cars');
+}
+
+function showPartsByIndex(cat, idx, backToHome) {
+    var car = db[cat] ? db[cat][idx] : null; if(!car) return;
+    var list = document.getElementById('parts-list'); var h = document.getElementById('parts-header');
+    if(!list || !h) return; list.innerHTML = ''; h.textContent = car.name;
+
+    var backBtn = document.getElementById('parts-back-btn');
+    if (backToHome) { backBtn.textContent = '← На главную'; backBtn.onclick = function() { showScreen('screen-home'); }; }
+    else { backBtn.textContent = '← Назад к авто'; backBtn.onclick = function() { showScreen('screen-cars'); }; }
+
+    if(!car.parts || !car.parts.length) { list.innerHTML = '<div class="card milky" style="text-align:center">Запчасти не найдены</div>'; }
+    else {
+        for(var i=0; i<car.parts.length; i++) {
+            var p = car.parts[i]; if(!p) continue;
+            var d = document.createElement('div'); d.className = 'card milky';
+            d.innerHTML = '<div class="card-icon">🔧</div><div class="card-title">' + p.name + '</div><div class="card-subtitle">Артикул: <b>' + (p.oem || 'Н/Д') + '</b> (' + (p.system || 'Прочее') + ')</div>';
+            d.onclick = (function(part, car) { return function() { showPartDetail(part, car); }; })(p, car);
+            list.appendChild(d);
+        }
+    }
+    showScreen('screen-parts');
+}
+
+// 🔥 НОВАЯ ФУНКЦИЯ: Показ деталей запчасти с рекомендациями
+function showPartDetail(part, car) {
+    currentPart = { part: part, car: car };
+    var content = document.getElementById('detail-content');
+    var header = document.getElementById('detail-header');
+    header.textContent = part.name;
+
+    let html = '<div class="card milky" style="padding: 20px;">';
+    html += '<div class="card-icon" style="font-size: 50px;">🔧</div>';
+    html += '<div class="card-title" style="font-size: 20px; margin: 10px 0;">' + part.name + '</div>';
+    html += '<div class="card-subtitle" style="font-size: 14px; margin-bottom: 15px;">Артикул: <b>' + (part.oem || 'Н/Д') + '</b> (' + (part.system || 'Прочее') + ')</div>';
+
+    // Блок 1: Кнопки заказа
+    html += '<button class="btn btn-service" onclick="showShops()">🏪 Узнать наличие в магазине</button>';
+    html += '<a href="https://artpart42.ru/api/deeplink?brand=' + encodeURIComponent(car.brand) + '&model=' + encodeURIComponent(car.model) + '" target="_blank" class="btn btn-buy">🛒 Найти в ROSSKO</a>';
+    html += '</div>';
+
+    // Блок 2: Рекомендации
+    if (part.recommended && part.recommended.length > 0) {
+        html += '<div class="card milky" style="padding: 20px; margin-top: 15px;">';
+        html += '<div class="card-title" style="font-size: 16px; margin-bottom: 10px;">💡 Вместе рекомендуют заменить:</div>';
+        for (let i = 0; i < part.recommended.length; i++) {
+            html += '<div class="recommendation-item">🔹 ' + part.recommended[i] + '</div>';
+        }
+        html += '</div>';
+    }
+
+    // Блок 3: Инструменты
+    if (part.tools && part.tools.length > 0) {
+        html += '<div class="card milky" style="padding: 20px; margin-top: 15px;">';
+        html += '<div class="card-title" style="font-size: 16px; margin-bottom: 10px;">🔧 Для замены понадобится:</div>';
+        for (let i = 0; i < part.tools.length; i++) {
+            html += '<div class="tool-item">✅ ' + part.tools[i] + '</div>';
+        }
+        html += '</div>';
+    }
+
+    // Блок 4: Видео и СТО
+    html += '<div class="card milky" style="padding: 20px; margin-top: 15px;">';
+    html += '<div class="card-title" style="font-size: 16px; margin-bottom: 15px;">🎥 Как заменить:</div>';
+
+    if (part.video_youtube) {
+        html += '<a href="' + part.video_youtube + '" target="_blank" class="btn btn-video">▶️ Смотреть на YouTube</a>';
+    }
+    if (part.video_rutube) {
+        html += '<a href="' + part.video_rutube + '" target="_blank" class="btn btn-video" style="background:linear-gradient(135deg,#0077ff 0%,#0055cc 100%);">▶️ Смотреть на Rutube</a>';
+    }
+
+    if (part.service) {
+        html += '<div class="service-card">';
+        html += '<div style="font-size: 14px; margin-bottom: 10px;">Или доверьте профессионалам:</div>';
+        html += '<div style="font-weight: 700; font-size: 16px;">' + part.service.name + '</div>';
+        html += '<div style="font-size: 13px; opacity: 0.8;">' + part.service.address + '</div>';
+        html += '<div style="font-size: 13px; margin-top: 5px;">⭐ ' + part.service.rating + ' · ' + part.service.reviews + ' отзывов</div>';
+        html += '<div style="font-size: 15px; font-weight: 700; margin-top: 10px;">💰 Замена: ' + part.service.price + ' ₽</div>';
+        html += '<button class="btn btn-service" onclick="bookService()">📞 Записаться на замену</button>';
+        html += '</div>';
+    }
+
+    html += '</div>';
+
+    content.innerHTML = html;
+    showScreen('screen-part-detail');
+}
+
+// 🔥 Показ списка магазинов с автоматическим запросом наличия
+function showShops() {
+    var list = document.getElementById('shops-list');
+    list.innerHTML = '';
+
+    if (!currentPart) return;
+
+    // Список партнерских магазинов
+    var shops = [
+        { name: 'АвтоДетали', address: 'ул. Ленина, 45', contact: 'https://t.me/ArTPart42admin' },
+        { name: 'Запчасти42', address: 'ул. Советская, 12', contact: 'https://t.me/ArTPart42admin' }
+    ];
+
+    let carInfo = myCar ? myCar.name : 'Не указан';
+    let vinInfo = (myCar && myCar.vin) ? myCar.vin : 'Не указан';
+
+    for (let i = 0; i < shops.length; i++) {
+        let shop = shops[i];
+        let d = document.createElement('div');
+        d.className = 'card milky';
+        
+        // Формируем сообщение с VIN для запроса наличия
+        let requestText = 'Здравствуйте! Есть ли в наличии ' + currentPart.part.name + ' (артикул: ' + (currentPart.part.oem || 'Н/Д') + ')? Мой автомобиль: ' + carInfo + ', VIN: ' + vinInfo + '.';
+        let requestUrl = shop.contact + '?text=' + encodeURIComponent(requestText);
+        
+        d.innerHTML = '<div class="card-icon">🏪</div><div class="card-title">' + shop.name + '</div><div class="card-subtitle">' + shop.address + '</div><a href="' + requestUrl + '" target="_blank" class="btn btn-service" style="margin-top: 12px;">💬 Узнать наличие</a>';
+        list.appendChild(d);
+    }
+
+    showScreen('screen-shops');
+}
+
+// 🔥 Бронирование в магазине
+function bookInShop(shopName, shopPhone) {
+    if (!currentPart) return;
+    let carInfo = myCar ? myCar.name : 'Не указан';
+    let vinInfo = (myCar && myCar.vin) ? ', VIN: ' + myCar.vin : '';
+    let text = 'Здравствуйте! Хочу забронировать ' + currentPart.part.name + ' (артикул: ' + (currentPart.part.oem || 'Н/Д') + ') в магазине "' + shopName + '". Мой автомобиль: ' + carInfo + vinInfo + '.';
+    window.open('https://t.me/ArTPart42admin?text=' + encodeURIComponent(text), '_blank');
+}
+
+// 🔥 Запись в СТО
+function bookService() {
+    if (!currentPart || !currentPart.part.service) return;
+    let carInfo = myCar ? myCar.name : 'Не указан';
+    let vinInfo = (myCar && myCar.vin) ? ', VIN: ' + myCar.vin : '';
+    let text = 'Здравствуйте! Хочу записаться на замену ' + currentPart.part.name + ' в ' + currentPart.part.service.name + '. Мой автомобиль: ' + carInfo + vinInfo + '.';
+    window.open('https://t.me/ArTPart42admin?text=' + encodeURIComponent(text), '_blank');
+}
+
+function initApp() {
+    var tc = 0, tp = 0;
+    for(var c in db) {
+        if(!db[c]) continue; tc += db[c].length;
+        var el = document.getElementById('count-' + c); if(el) el.textContent = db[c].length;
+        for(var i=0; i<db[c].length; i++) { if(db[c][i] && db[c][i].parts) tp += db[c][i].parts.length; }
+    }
+    var s = document.getElementById('stats-badge'); if(s && s.textContent.indexOf('❌') === -1 && s.textContent.indexOf('Офлайн') === -1) s.textContent = '🚘 ' + tc + ' авто · 🔧 ' + tp + ' запчастей';
+}
+
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    var q = e.target.value.toLowerCase().trim();
+    var resultsDiv = document.getElementById('searchResults');
+    var categoriesDiv = document.getElementById('categoriesList');
+    if(q.length < 2) { resultsDiv.classList.add('hidden'); categoriesDiv.classList.remove('hidden'); return; }
+    categoriesDiv.classList.add('hidden'); resultsDiv.classList.remove('hidden'); resultsDiv.innerHTML = '';
+    var found = false;
+    for(var cat in db) {
+        if(!db[cat]) continue;
+        for(var i=0; i<db[cat].length; i++) {
+            var car = db[cat][i];
+            if(car && car.name.toLowerCase().indexOf(q) !== -1) {
+                found = true; var cc = cat, ii = i;
+                var d = document.createElement('div'); d.className = 'card';
+                d.innerHTML = '<div class="card-icon">🚗</div><div class="card-title">' + car.name + '</div><div class="card-subtitle">' + (car.parts ? car.parts.length : 0) + ' запчастей</div>';
+                d.onclick = (function(c, idx) { return function() { document.getElementById('searchInput').value = ''; document.getElementById('searchResults').classList.add('hidden'); document.getElementById('categoriesList').classList.remove('hidden'); showPartsByIndex(c, idx, true); } })(cc, ii);
+                resultsDiv.appendChild(d);
+            }
+        }
+    }
+    if(!found) resultsDiv.innerHTML = '<div class="card" style="text-align:center; color: #333;">😕 Ничего не найдено</div>';
+});
+</script>
+</body>
+</html>
